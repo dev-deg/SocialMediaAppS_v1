@@ -17,7 +17,7 @@
         public string PostAuthor { get; set; }
 
         [FirestoreProperty]
-        public string PostDate { get; set; }
+        public long PostDate { get; set; }
 
         //TODO: Add image/video
     }
