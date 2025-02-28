@@ -1,0 +1,33 @@
+﻿@model IEnumerable<SocialMediaAppSWD_v1.Models.SocialMediaPost>
+
+@{
+    ViewData["Title"] = "SocialSpace";
+}
+
+<div class="container mt-5">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Create a Post</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-controller="Social" asp-action="CreatePost" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="PostContent">What's on your mind?</label>
+                    <textarea class="form-control" id="PostContent" name="PostContent" rows="3" required></textarea>
+                </div>
+                <p>Author: @User.Identity.Name</p>
+                <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card-columns">
+        @foreach (SocialMediaPost post in Model)
+        {
+            <div id="@Html.DisplayFor(item => post.PostId)" class="card mb-3">
+                    <p class="card-text">@Html.DisplayFor(item => post.PostContent)</p>
+                    <h6 class="card-subtitle mb-2 text-muted">By @Html.DisplayFor(item => post.PostAuthor) on @Html.DisplayFor(item => post.PostDate.UtcDateTime)</h6>
+            </div>
+        }
+    </div>
+</div>
