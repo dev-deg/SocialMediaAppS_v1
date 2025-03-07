@@ -1,0 +1,46 @@
+﻿.custom-file-upload {
+    display: inline-block;
+    cursor: pointer;
+}
+
+#imagePreviewContainer {
+    position: relative;
+    width: 200px;
+    margin-top: 10px;
+}
+
+#imagePreview {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+#removeImageBtn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 50%;
+}
+
+.card-columns {
+    column-count: 1;
+}
+
+@media (min-width: 768px) {
+    .card-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 3;
+    }
+}
+
+.card .card-img-top {
+    object-fit: cover;
+    max-height: 300px;
+}

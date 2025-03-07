@@ -3,4 +3,6 @@
 public interface IFileUploadService
 {
     Task<string> UploadFileAsync(IFormFile file, string fileName);
+
+    Task DeletePostImageAsync(string imageUrl);
 }

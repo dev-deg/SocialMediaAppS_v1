@@ -10,24 +10,62 @@
             <h2>Create a Post</h2>
         </div>
         <div class="card-body">
-            <form method="post" asp-controller="Social" asp-action="CreatePost" enctype="multipart/form-data">
+            <form method="post" asp-controller="Social" asp-action="CreatePost" enctype="multipart/form-data" id="postForm">
                 <div class="form-group">
                     <label for="PostContent">What's on your mind?</label>
                     <textarea class="form-control" id="PostContent" name="PostContent" rows="3" required></textarea>
                 </div>
+
+                <div class="form-group mt-3">
+                    <label for="imageUpload" class="d-block">Add an image</label>
+                    <div class="custom-file-upload">
+                        <input type="file" id="imageUpload" accept="image/*" class="d-none" />
+                        <button type="button" id="uploadButton" class="btn btn-outline-secondary">
+                            <i class="fas fa-image"></i> Select Image
+                        </button>
+                    </div>
+                    <div id="imagePreviewContainer" class="mt-2 d-none">
+                        <img id="imagePreview" class="img-fluid img-thumbnail" alt="Image preview" />
+                        <button type="button" id="removeImageBtn" class="btn btn-sm btn-danger position-absolute">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" id="PostImageUrl" name="PostImageUrl" />
+                </div>
+
                 <p>Author: @User.Identity.Name</p>
-                <button type="submit" class="btn btn-primary">Post</button>
+                <button type="submit" class="btn btn-primary" id="submitPostBtn">Post</button>
             </form>
         </div>
     </div>
-
-    <div class="card-columns">
-        @foreach (SocialMediaPost post in Model)
-        {
-            <div id="@Html.DisplayFor(item => post.PostId)" class="card mb-3">
-                    <p class="card-text">@Html.DisplayFor(item => post.PostContent)</p>
-                    <h6 class="card-subtitle mb-2 text-muted">By @Html.DisplayFor(item => post.PostAuthor) on @Html.DisplayFor(item => post.PostDate.UtcDateTime)</h6>
-            </div>
-        }
-    </div>
 </div>
+
+<div class="card-columns">
+    @foreach (SocialMediaPost post in Model)
+    {
+        <div id="@Html.DisplayFor(item => post.PostId)" class="card mb-3">
+            <div class="card-header position-relative">
+                @if (post.PostAuthor == User.Identity.Name)
+                {
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 delete-post"
+                            data-post-id="@post.PostId">
+                        <i class="fas fa-times"></i>
+                    </button>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(post.PostImageUrl))
+            {
+                <img src="@post.PostImageUrl" class="card-img-top" alt="Post image">
+            }
+            <div class="card-body">
+                <p class="card-text">@Html.DisplayFor(item => post.PostContent)</p>
+                <h6 class="card-subtitle mb-2 text-muted">By @Html.DisplayFor(item => post.PostAuthor) on @Html.DisplayFor(item => post.PostDate.UtcDateTime)</h6>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script src="~/js/imageUpload.js"></script>
+    <script src="~/js/postDelete.js"></script>
+}
