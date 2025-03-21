@@ -1,5 +1,4 @@
 using Google.Cloud.SecretManager.V1;
-using Microsoft.Extensions.Logging;
 using SocialMediaAppSWD_v1.Interfaces;
 
 namespace SocialMediaAppSWD_v1.Services
@@ -8,39 +7,39 @@ namespace SocialMediaAppSWD_v1.Services
     {
         private readonly string _projectId;
         private readonly SecretManagerServiceClient _client;
-        private readonly ILogger<GoogleSecretManagerService> _logger;
+        private readonly ICloudLoggingService _logger;
 
-        public GoogleSecretManagerService(string projectId, ILogger<GoogleSecretManagerService> logger = null)
+        public GoogleSecretManagerService(string projectId, ICloudLoggingService logger)
         {
             _projectId = projectId;
             _client = SecretManagerServiceClient.Create();
             _logger = logger;
             
-            _logger?.LogInformation("GoogleSecretManagerService initialized for project: {ProjectId}", projectId);
+            _logger.LogInformationAsync($"GoogleSecretManagerService initialized for project: {projectId}").Wait();
         }
 
         public async Task<string> GetSecretAsync(string secretName)
         {
-            _logger?.LogDebug("Retrieving secret: {SecretName}", secretName);
+            await _logger.LogDebugAsync($"Retrieving secret: {secretName}");
             
             try
             {
                 var secretVersionName = new SecretVersionName(_projectId, secretName, "latest");
                 var result = await _client.AccessSecretVersionAsync(secretVersionName);
                 
-                _logger?.LogDebug("Successfully retrieved secret: {SecretName}", secretName);
+                await _logger.LogDebugAsync($"Successfully retrieved secret: {secretName}");
                 return result.Payload.Data.ToStringUtf8();
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error retrieving secret: {SecretName}", secretName);
+                await _logger.LogErrorAsync($"Error retrieving secret: {secretName}", ex);
                 throw;
             }
         }
 
         public async Task LoadSecretsIntoConfigurationAsync(IConfiguration configuration)
         {
-            _logger?.LogInformation("Loading secrets into configuration");
+            await _logger.LogInformationAsync("Loading secrets into configuration");
             
             try
             {
@@ -55,14 +54,14 @@ namespace SocialMediaAppSWD_v1.Services
                 foreach (var secret in secrets)
                 {
                     configuration[secret.Key] = secret.Value;
-                    _logger?.LogDebug("Secret loaded into configuration: {ConfigKey}", secret.Key);
+                    await _logger.LogDebugAsync($"Secret loaded into configuration: {secret.Key}");
                 }
                 
-                _logger?.LogInformation("Successfully loaded {Count} secrets into configuration", secrets.Count);
+                await _logger.LogInformationAsync($"Successfully loaded {secrets.Count} secrets into configuration");
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error loading secrets into configuration");
+                await _logger.LogErrorAsync("Error loading secrets into configuration", ex);
                 throw;
             }
         }
